@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment QR Monitor</title>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .monitor { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .qr-container { 
+            text-align: center; 
+            margin: 20px 0; 
+        }
+        .status { 
+            padding: 15px; 
+            margin: 20px 0; 
+            border-radius: 5px; 
+            text-align: center; 
+            font-weight: bold;
+        }
+        .status.waiting { 
+            background: #fff3cd; 
+            color: #856404; 
+            border: 1px solid #ffeaa7;
+        }
+        .status.completed { 
+            background: #d1edff; 
+            color: #0c5460; 
+            border: 1px solid #bee5eb;
+        }
+        .status.failed { 
+            background: #f8d7da; 
+            color: #721c24; 
+            border: 1px solid #f5c6cb;
+        }
+        button { 
+            background: #007cba; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        button:hover { background: #005a87; }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .info-label { font-weight: bold; }
+        .countdown { font-size: 18px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="monitor">
+        <h1>📱 Payment QR Monitor</h1>
+        
+        <div id="qrSection" style="display:none;">
+            <div class="qr-container">
+                <img id="qrImage" style="max-width: 300px; border: 2px solid #ddd; border-radius: 8px;">
+                <br><br>
+                <button id="bankAppBtn" onclick="openBankApp()">Open in Bank App</button>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-label">Transaction ID:</div>
+                <div id="transactionId">-</div>
+                
+                <div class="info-label">Bank:</div>
+                <div id="bankName">-</div>
+                
+                <div class="info-label">Amount:</div>
+                <div id="amount">-</div>
+                
+                <div class="info-label">Status:</div>
+                <div id="paymentStatus" class="status waiting">Waiting for payment...</div>
+            </div>
+            
+            <div class="countdown" id="countdown"></div>
+        </div>
+        
+        <div id="generateSection">
+            <h3>Generate New QR Payment</h3>
+            <form id="qrForm">
+                <p>
+                    <label>Bank:</label>
+                    <select id="bank" required>
+                        <option value="BCEL">BCEL</option>
+                        <option value="JDB">JDB</option>
+                        <option value="LDB">LDB</option>
+                        <option value="IB">Indochina Bank</option>
+                    </select>
+                </p>
+                <p>
+                    <label>Amount (LAK):</label>
+                    <input type="number" id="amountInput" value="25000" required>
+                </p>
+                <p>
+                    <label>Description:</label>
+                    <input type="text" id="description" value="Test QR Payment" required>
+                </p>
+                <button type="submit">Generate QR & Monitor</button>
+            </form>
+        </div>
+        
+        <div id="result" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        let pollInterval;
+        let currentTransactionId;
+        let timeLeft = 300; // 5 minutes timeout
+        let countdownInterval;
+        
+        document.getElementById('qrForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await generateQRAndMonitor();
+        });
+        
+        async function generateQRAndMonitor() {
+            const bank = document.getElementById('bank').value;
+            const amount = document.getElementById('amountInput').value;
+            const description = document.getElementById('description').value;
+            
+            try {
+                document.getElementById('result').innerHTML = '<div style="text-align:center;">Generating QR...</div>';
+                
+                const response = await fetch('/api/payment-qr', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bank, amount: parseInt(amount), description })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentTransactionId = data.transactionId;
+                    
+                    // Show QR section
+                    document.getElementById('qrSection').style.display = 'block';
+                    document.getElementById('generateSection').style.display = 'none';
+                    
+                    // Populate data
+                    document.getElementById('qrImage').src = `data:image/png;base64,${data.qrImage}`;
+                    document.getElementById('transactionId').textContent = data.transactionId;
+                    document.getElementById('bankName').textContent = bank;
+                    document.getElementById('amount').textContent = `${amount} LAK`;
+                    
+                    // Set up bank app button
+                    if (data.link && data.link !== 'undefined') {
+                        document.getElementById('bankAppBtn').onclick = () => window.open(data.link, '_blank');
+                        document.getElementById('bankAppBtn').style.display = 'inline-block';
+                    } else {
+                        document.getElementById('bankAppBtn').style.display = 'none';
+                    }
+                    
+                    // Start monitoring
+                    startMonitoring();
+                    startCountdown();
+                    
+                    document.getElementById('result').innerHTML = '<div style="text-align:center; color: green;">✅ QR Generated! Scan with your bank app and we\'ll monitor for payment completion.</div>';
+                    
+                } else {
+                    document.getElementById('result').innerHTML = `<div style="color: red;">❌ Error: ${data.error}</div>`;
+                }
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<div style="color: red;">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        function startMonitoring() {
+            // Since we can't get real-time webhook callbacks in localhost,
+            // we'll simulate monitoring with a message to user
+            updateStatus('waiting', 'Waiting for payment... Please complete payment in your bank app.');
+            
+            // Show instructions
+            setTimeout(() => {
+                updateStatus('waiting', 'After completing payment in your bank app, click "Check Status" below to simulate webhook callback.');
+                showCheckButton();
+            }, 5000);
+        }
+        
+        function startCountdown() {
+            timeLeft = 300; // 5 minutes
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('countdown').textContent = `⏱ Time remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    updateStatus('failed', 'Payment timeout. Please try again.');
+                }
+            }, 1000);
+        }
+        
+        function showCheckButton() {
+            const checkBtn = document.createElement('button');
+            checkBtn.textContent = '🔍 Check Payment Status';
+            checkBtn.onclick = simulatePaymentComplete;
+            checkBtn.style.margin = '10px';
+            checkBtn.style.background = '#28a745';
+            
+            document.getElementById('result').appendChild(checkBtn);
+        }
+        
+        function simulatePaymentComplete() {
+            // Simulate successful payment
+            clearInterval(countdownInterval);
+            updateStatus('completed', '✅ Payment Completed Successfully!');
+            
+            // Show simulated webhook data
+            const webhookData = {
+                transactionId: currentTransactionId,
+                status: 'PAYMENT_COMPLETED',
+                paymentMethod: document.getElementById('bankName').textContent,
+                txnAmount: parseInt(document.getElementById('amount').textContent),
+                timestamp: new Date().toISOString()
+            };
+            
+            document.getElementById('result').innerHTML += `
+                <div style="background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 4px;">
+                    <h4>📋 Simulated Webhook Data:</h4>
+                    <pre style="background: white; padding: 10px; border-radius: 4px; overflow-x: auto;">
+${JSON.stringify(webhookData, null, 2)}
+                    </pre>
+                </div>
+                <button onclick="resetMonitor()" style="background: #6c757d;">🔄 Create New QR</button>
+            `;
+        }
+        
+        function updateStatus(type, message) {
+            const statusEl = document.getElementById('paymentStatus');
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+        }
+        
+        function resetMonitor() {
+            if (pollInterval) clearInterval(pollInterval);
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            document.getElementById('qrSection').style.display = 'none';
+            document.getElementById('generateSection').style.display = 'block';
+            document.getElementById('result').innerHTML = '';
+            
+            currentTransactionId = null;
+        }
+    </script>
+</body>
+</html>

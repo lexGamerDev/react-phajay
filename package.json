@@ -1,0 +1,63 @@
+{
+  "name": "phajay-payment-sdk",
+  "version": "1.3.0",
+  "type": "module",
+  "description": "Official TypeScript/JavaScript SDK for PhaJay Payment Gateway - Supporting Payment QR, Payment Link and Credit Card services in Lao PDR",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts,.js",
+    "lint:fix": "eslint src --ext .ts,.js --fix",
+    "prepare": "npm run build",
+    "docs": "typedoc src/index.ts"
+  },
+  "keywords": [
+    "phajay",
+    "payment",
+    "gateway",
+    "lao",
+    "laos",
+    "qr",
+    "credit-card",
+    "fintech",
+    "typescript",
+    "sdk"
+  ],
+  "author": "PhaJay Payment Gateway",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phajay/phajay-payment-sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/phajay/phajay-payment-sdk/issues"
+  },
+  "homepage": "https://github.com/phajay/phajay-payment-sdk#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.5",
+    "@types/node": "^20.6.3",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "eslint": "^8.49.0",
+    "jest": "^29.7.0",
+    "rollup": "^3.29.2",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "ts-jest": "^29.1.1",
+    "typedoc": "^0.25.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "socket.io-client": "^4.8.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
