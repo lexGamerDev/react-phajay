@@ -46,12 +46,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lexGamerDev/react-phajay.git"
+    "url": "git+https://github.com/lailaolabdev/react-phajay.git"
   },
   "bugs": {
-    "url": "https://github.com/lexGamerDev/react-phajay/issues"
+    "url": "https://github.com/lailaolabdev/react-phajay/issues"
   },
-  "homepage": "https://github.com/lexGamerDev/react-phajay#readme",
+  "homepage": "https://github.com/lailaolabdev/react-phajay#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

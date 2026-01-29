@@ -6,7 +6,7 @@ Official React SDK for PhaJay Payment Gateway - Supporting Payment QR, Payment L
 [![Downloads](https://img.shields.io/npm/dm/react-phajay)](https://www.npmjs.com/package/react-phajay)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub issues](https://img.shields.io/github/issues/phajay/react-phajay)](https://github.com/lexGamerDev/react-phajay/issues)
+[![GitHub issues](https://img.shields.io/github/issues/phajay/react-phajay)](https://github.com/lailaolabdev/react-phajay/issues)
 
 > 🚨 **Production Ready** - This SDK is ready for production use with comprehensive error handling, type safety, and real-time features.
 
@@ -538,7 +538,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Documentation**: [https://payment-doc.phajay.co/v1](https://payment-doc.phajay.co/v1)
 - **Portal**: [https://portal.phajay.co](https://portal.phajay.co)
-- **Issues**: [GitHub Issues](https://github.com/lexGamerDev/react-phajay/issues)
+- **Issues**: [GitHub Issues](https://github.com/lailaolabdev/react-phajay/issues)
 
 ## Changelog
 

@@ -13,7 +13,7 @@ We actively maintain security updates for the following versions:
 
 If you discover a security vulnerability within React PhaJay, please report it through our official channels:
 
-- **GitHub Issues**: [GitHub Issues](https://github.com/lexGamerDev/react-phajay/issues) (for non-sensitive issues)
+- **GitHub Issues**: [GitHub Issues](https://github.com/lailaolabdev/react-phajay/issues) (for non-sensitive issues)
 - **PhaJay Portal**: Contact through [PhaJay Portal](https://portal.phajay.co) for security-related concerns
 
 Please do **not** report sensitive security vulnerabilities through public GitHub issues.
@@ -79,4 +79,4 @@ When reporting a vulnerability, please include:
 For security-related questions or concerns:
 - **Documentation**: [https://payment-doc.phajay.co/v1](https://payment-doc.phajay.co/v1)
 - **Portal**: [https://portal.phajay.co](https://portal.phajay.co)
-- **GitHub Issues**: [https://github.com/lexGamerDev/react-phajay/issues](https://github.com/lexGamerDev/react-phajay/issues)
+- **GitHub Issues**: [https://github.com/lailaolabdev/react-phajay/issues](https://github.com/lailaolabdev/react-phajay/issues)
