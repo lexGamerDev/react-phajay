@@ -236,30 +236,38 @@ function StyledPayments() {
 Components automatically inject default styles, but you can override them:
 
 ```css
-/* Default CSS classes you can customize */
-.phajay-payment-qr-button {
-  background: #4f46e5;
+/* Default CSS class that all components use */
+.phajay-payment-base {
+  padding: 12px 24px;
+  background-color: #09326a;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-weight: 500;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.phajay-payment-qr-button:hover {
-  background: #4338ca;
+.phajay-payment-base:hover:not(:disabled) {
+  background-color: #07274a;
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.phajay-payment-qr-button:disabled {
+.phajay-payment-base:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
-/* Same pattern applies to .phajay-payment-link and .phajay-payment-credit-card */
+.phajay-payment-base.loading {
+  background-color: #07274a;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
 ```
 
 ### Real-time Payment Monitoring
@@ -292,8 +300,8 @@ function AutoSubscriptionDemo() {
 
 **Automatic Features:**
 - ⚡ **Auto-Start**: Subscription begins immediately when QR is generated
-- � **Zero Config**: No `enableSubscription` prop needed
-- � **Visual Status**: Connection status indicators included
+- 🔧 **Zero Config**: No `enableSubscription` prop needed
+- 📊 **Visual Status**: Connection status indicators included
 - 🎯 **Demo Fallback**: Simulates payment success after 10 seconds if connection fails
 - ⏹️ **Auto-Stop**: Subscription ends when payment received or component unmounts
 
@@ -556,21 +564,6 @@ const request: PaymentQRRequest = {
 
 ## Examples
 
-Check the `/examples` directory in your project for complete implementation examples:
-
-```bash
-# Core SDK usage examples
-examples/
-├── basic-usage.ts          # All service examples
-├── webhook-handler.js      # Express.js webhook setup  
-└── react-integration.jsx  # React component examples
-
-# Demo application
-demo-connect-phajay-sdk/
-├── src/App.jsx            # Complete React demo
-└── README.md              # Demo setup instructions
-```
-
 ### Quick Examples
 
 ```typescript
@@ -591,6 +584,61 @@ import { PhaJayProvider, PaymentQR } from 'react-phajay';
 <PhaJayProvider secretKey="your-key">
   <PaymentQR amount={25000} bank="BCEL" />
 </PhaJayProvider>
+```
+
+### Complete Integration Example
+
+```jsx
+import React, { useState } from 'react';
+import { PhaJayProvider, PaymentQR, PaymentLink, PaymentCreditCard } from 'react-phajay';
+
+function PaymentDemo() {
+  const [paymentStatus, setPaymentStatus] = useState('');
+
+  return (
+    <PhaJayProvider secretKey="your-secret-key">
+      <div className="payment-container">
+        <h2>Choose Payment Method</h2>
+        
+        {/* QR Payment */}
+        <PaymentQR
+          amount={50000}
+          description="Product Purchase"
+          bank="BCEL"
+          onPaymentSuccess={(data) => {
+            setPaymentStatus(`Payment successful! Transaction: ${data.transactionId}`);
+          }}
+          onPaymentError={(error) => {
+            setPaymentStatus(`Payment failed: ${error.message}`);
+          }}
+        />
+        
+        {/* Payment Link */}
+        <PaymentLink
+          amount={75000}
+          description="Service Payment"
+          orderNo="ORDER-001"
+          onSuccess={(response) => {
+            console.log('Redirecting to:', response.redirectURL);
+          }}
+        />
+        
+        {/* Credit Card */}
+        <PaymentCreditCard
+          amount={100}  // USD
+          description="Premium Service"
+          onSuccess={(response) => {
+            console.log('Card payment URL:', response.paymentUrl);
+          }}
+        />
+        
+        {paymentStatus && (
+          <div className="payment-status">{paymentStatus}</div>
+        )}
+      </div>
+    </PhaJayProvider>
+  );
+}
 ```
 
 ## Real-time Payment Subscriptions
@@ -717,7 +765,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Documentation**: [https://payment-doc.phajay.co/v1](https://payment-doc.phajay.co/v1)
 - **Portal**: [https://portal.phajay.co](https://portal.phajay.co)
-- **Issues**: [GitHub Issues](https://github.com/phajay/phajay-payment-sdk/issues)
+- **Issues**: [GitHub Issues](https://github.com/phajay/react-phajay/issues)
 
 ## Changelog
 
@@ -729,26 +777,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - 📡 **Real-time Features**: Automatic WebSocket payment monitoring
 - 🎨 **Customizable**: Override styles with className prop
 - 🔒 **Type Safe**: Full TypeScript support and comprehensive error handling
-- � **Production Ready**: Optimized 59.2 kB bundle size
-
-### Version 1.2.0
-- 🔧 **BREAKING**: Removed sandbox environment support - production only
-- 🎯 **Simplified**: Single environment configuration (production)
-- 📝 **Updated**: Documentation and examples reflect production-only setup
-- 🧹 **Cleaned**: Removed all sandbox-related code and configurations
-
-### Version 1.1.0
-- ✨ **NEW**: Real-time Payment Subscriptions via Socket.IO
-- ✨ **NEW**: QRSubscriptionService for advanced subscription control
-- ✨ **NEW**: Convenience methods in PhaJayClient for subscription
-- 🔧 **Added**: Subscription status monitoring and connection management
-- 📚 **Enhanced**: Documentation with subscription examples
-- 🧪 **Added**: Subscription demo and test utilities
-
-### Version 1.0.0
-- 🎉 **Initial Release**: Payment Link, Payment QR, and Credit Card services
-- 📘 **Full TypeScript**: Comprehensive type definitions and IDE support
-- 📚 **Documentation**: Complete API reference and examples
+- 📦 **Production Ready**: Optimized 61.6 kB bundle size
 
 ---
 
