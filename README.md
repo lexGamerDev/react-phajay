@@ -239,7 +239,6 @@ function StyledPayments() {
   );
 }
 ```
-```
 
 **Automatic Features:**
 - ⚡ **Auto-Start**: Subscription begins immediately when QR is generated
@@ -279,7 +278,6 @@ function QRPaymentDemo() {
     </PhaJayProvider>
   );
 }
-```
 ```
 
 ## Configuration
@@ -615,7 +613,6 @@ const request: PaymentQRRequest = {
   Pay with Card
 </PaymentCreditCard>
 ```
-```
 
 ## Examples
 
@@ -687,7 +684,6 @@ function PaymentDemo() {
     </PhaJayProvider>
   );
 }
-```
 ```
 
 ## API Reference
