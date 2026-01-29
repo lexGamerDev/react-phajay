@@ -86,7 +86,7 @@ import { PhaJayProvider, PaymentQR } from 'react-phajay';
 
 function App() {
   return (
-    <PhaJayProvider secretKey="your-secret-key">
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
       <PaymentQR 
         amount={50000}
         description="Coffee Payment"
@@ -130,7 +130,7 @@ import { PhaJayProvider, PaymentLink, PaymentCreditCard } from 'react-phajay';
 
 function PaymentButtons() {
   return (
-    <PhaJayProvider secretKey="your-secret-key">
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
       {/* PaymentLink - Auto redirects to payment gateway */}
       <PaymentLink 
         amount={50000}
@@ -172,7 +172,7 @@ import { PhaJayProvider, PaymentQR } from 'react-phajay';
 
 function QRPaymentComponent() {
   return (
-    <PhaJayProvider secretKey="your-secret-key">
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
       <PaymentQR 
         amount={50000}
         description="Coffee Payment"
@@ -200,7 +200,7 @@ import { PhaJayProvider, PaymentQR, PaymentLink, PaymentCreditCard } from 'react
 
 function StyledPayments() {
   return (
-    <PhaJayProvider secretKey="your-secret-key">
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
       {/* Using Tailwind CSS */}
       <PaymentQR 
         amount={25000}
@@ -226,73 +226,6 @@ function StyledPayments() {
       >
         Premium Card Payment
       </PaymentCreditCard>
-    </PhaJayProvider>
-  );
-}
-```
-
-### Default CSS Classes
-
-Components automatically inject default styles, but you can override them:
-
-```css
-/* Default CSS class that all components use */
-.phajay-payment-base {
-  padding: 12px 24px;
-  background-color: #09326a;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.phajay-payment-base:hover:not(:disabled) {
-  background-color: #07274a;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.phajay-payment-base:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.phajay-payment-base.loading {
-  background-color: #07274a;
-  cursor: not-allowed;
-  opacity: 0.8;
-}
-```
-
-### Real-time Payment Monitoring
-
-The PaymentQR component includes automatic subscription with intelligent error handling:
-
-```jsx
-import { PhaJayProvider, PaymentQR } from 'react-phajay';
-
-function AutoSubscriptionDemo() {
-  return (
-    <PhaJayProvider secretKey="your-secret-key">
-      <PaymentQR 
-        amount={50000}
-        bank="BCEL"
-        onPaymentSuccess={(data) => {
-          // This will be called when payment is received
-          // OR after 10 seconds in demo mode if WebSocket connection fails
-          console.log('Payment completed:', data);
-        }}
-        onPaymentError={(error) => {
-          // Handle connection errors gracefully
-          console.log('Payment monitoring error:', error.message);
-        }}
-      />
     </PhaJayProvider>
   );
 }
@@ -348,26 +281,6 @@ const paymentLink = await client.paymentLink.createPaymentLink({
 });
 
 console.log('Redirect to:', paymentLink.redirectURL);
-```
-
-#### Process Webhook
-
-```typescript
-// In your webhook endpoint
-app.post('/webhook', (req, res) => {
-  try {
-    const result = client.paymentLink.processWebhook(req.body);
-    
-    console.log('Payment completed:', result.transactionId);
-    console.log('Status:', result.status);
-    console.log('Amount:', result.amount);
-    console.log('Order:', result.orderNo);
-    
-    res.status(200).json({ received: true });
-  } catch (error) {
-    res.status(400).json({ error: 'Invalid webhook' });
-  }
-});
 ```
 
 ### 2. Payment QR Service
@@ -432,28 +345,9 @@ console.log('Expires:', payment.expirationTime);
 // Redirect user to payment.paymentUrl
 ```
 
-#### Process Credit Card Webhook
-
-```typescript
-app.post('/webhook', (req, res) => {
-  const payload = req.body;
-  
-  if (payload.paymentMethod === 'CREDIT_CARD') {
-    const result = client.creditCard.processWebhook(payload);
-    
-    console.log('Card payment:', result.transactionId);
-    console.log('Card type:', result.cardType);
-    console.log('Card holder:', result.cardDetails?.cardHolderName);
-    console.log('Masked card:', result.cardDetails?.maskedCardNumber);
-  }
-  
-  res.status(200).json({ received: true });
-});
-```
-
 ## Webhook Configuration
 
-### 1. Configure URLs in PhaJay Portal
+### Configure URLs in PhaJay Portal
 
 1. Login to [PhaJay Portal](https://portal.phajay.co/)
 2. Go to **Settings > Callback URL Setting**
@@ -462,39 +356,6 @@ app.post('/webhook', (req, res) => {
 
 3. Go to **Settings > Webhook Setting**
    - **Endpoint**: Your server's webhook URL (e.g., `https://yourdomain.com/api/webhook`)
-
-### 2. Handle Webhook Requests
-
-```typescript
-import express from 'express';
-
-const app = express();
-app.use(express.json());
-
-app.post('/api/webhook', (req, res) => {
-  try {
-    const payload = req.body;
-    
-    // Process based on payment method
-    let result;
-    if (payload.paymentMethod === 'CREDIT_CARD') {
-      result = client.creditCard.processWebhook(payload);
-    } else {
-      result = client.paymentLink.processWebhook(payload);
-    }
-    
-    // Update your database
-    await updatePaymentStatus(result.transactionId, result.status);
-    
-    // Must respond with 200 to acknowledge receipt
-    res.status(200).json({ received: true });
-    
-  } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(400).json({ error: 'Invalid webhook payload' });
-  }
-});
-```
 
 ## Error Handling
 
@@ -541,7 +402,6 @@ import {
   CreditCardRequest,
   CreditCardResponse,
   SupportedBank,
-  WebhookPayload,
   // React component types (all from same package)
   PaymentQRProps,
   PaymentLinkProps,
@@ -581,7 +441,7 @@ const link = await client.paymentLink.createPaymentLink({
 // 2. React QR Component
 import { PhaJayProvider, PaymentQR } from 'react-phajay';
 
-<PhaJayProvider secretKey="your-key">
+<PhaJayProvider config={{ secretKey: "your-key" }}>
   <PaymentQR amount={25000} bank="BCEL" />
 </PhaJayProvider>
 ```
@@ -596,7 +456,7 @@ function PaymentDemo() {
   const [paymentStatus, setPaymentStatus] = useState('');
 
   return (
-    <PhaJayProvider secretKey="your-secret-key">
+    <PhaJayProvider config={{ secretKey: "your-secret-key" }}>
       <div className="payment-container">
         <h2>Choose Payment Method</h2>
         
