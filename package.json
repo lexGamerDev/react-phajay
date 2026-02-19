@@ -29,6 +29,7 @@
   },
   "keywords": [
     "phajay",
+    "react-phajay",
     "payment",
     "gateway",
     "react",
@@ -59,7 +60,7 @@
   ],
   "author": {
     "name": "PhaJay Payment Gateway",
-    "email": "support@phajay.co",
+    "email": "info@phapay.com",
     "url": "https://www.phajay.co"
   },
   "license": "MIT",
