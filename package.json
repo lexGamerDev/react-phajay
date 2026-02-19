@@ -1,8 +1,8 @@
 {
   "name": "react-phajay",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
-  "description": "Official React SDK for PhaJay Payment Gateway - Supporting Payment QR, Payment Link and Credit Card services in Lao PDR",
+  "description": "🇱🇦 Official React TypeScript SDK for PhaJay Payment Gateway - Easy integration for Payment QR, Payment Links, and Credit Card processing in Laos (LAK) and USD. Features real-time WebSocket payment monitoring, auto-redirect, and comprehensive error handling.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -32,15 +32,36 @@
     "payment",
     "gateway",
     "react",
+    "typescript",
     "lao",
     "laos",
-    "qr",
+    "lak",
+    "usd",
+    "qr-code",
+    "qr-payment",
     "credit-card",
+    "payment-link",
     "fintech",
-    "typescript",
-    "sdk"
+    "sdk",
+    "npm",
+    "library",
+    "bcel",
+    "jdb",
+    "ldb",
+    "banking",
+    "real-time",
+    "websocket",
+    "mobile-banking",
+    "e-commerce",
+    "payments",
+    "asia",
+    "southeast-asia"
   ],
-  "author": "PhaJay Payment Gateway",
+  "author": {
+    "name": "PhaJay Payment Gateway",
+    "email": "support@phajay.co",
+    "url": "https://www.phajay.co"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -49,7 +70,15 @@
   "bugs": {
     "url": "https://github.com/lailaolabdev/react-phajay/issues"
   },
-  "homepage": "https://github.com/lailaolabdev/react-phajay#readme",
+  "homepage": "https://www.phajay.co",
+  "funding": {
+    "type": "individual", 
+    "url": "https://www.phajay.co"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -82,8 +111,5 @@
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
   }
 }
